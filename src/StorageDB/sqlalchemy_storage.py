@@ -447,15 +447,12 @@ class SQLAlchemyStorage(StorageInterface):
             rows = await storage.get_decrypted_messages_async(key)
         """
         import base64 as _b64
-        from src.Encryption import MessageDecryptor, KeyManager
-        import hashlib as _hashlib
+        from src.Encryption import MessageDecryptor
 
         rows = await self.get_all_messages_async(limit=limit, offset=offset)
 
         decryptor = MessageDecryptor(key)
-        # Re-derive the HMAC sub-key used for chat-name indexing
-        hmac_key = _hashlib.sha256(key + b"chat-name-index").digest()[:16]
-
+        
         result = []
         for row in rows:
             out = dict(row)
