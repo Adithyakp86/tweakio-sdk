@@ -1,4 +1,5 @@
 """WhatsApp Web login handler supporting QR and phone number authentication."""
+
 from __future__ import annotations
 
 import asyncio
@@ -81,10 +82,7 @@ class Login(LoginInterface):
         self.log.info("Waiting for QR scan (%s seconds)...", wait_time // 1000)
 
         try:
-            await self.UIConfig.chat_list().wait_for(
-                timeout=wait_time,
-                state="visible"
-            )
+            await self.UIConfig.chat_list().wait_for(timeout=wait_time, state="visible")
             if await canvas.is_visible():
                 raise LoginError("QR not scanned within allowed time.")
             return True
@@ -98,10 +96,7 @@ class Login(LoginInterface):
 
         self.log.info("Starting code-based login...")
 
-        btn = self.page.get_by_role(
-            "button",
-            name=re.compile("log.*in.*phone number", re.I)
-        )
+        btn = self.page.get_by_role("button", name=re.compile("log.*in.*phone number", re.I))
         if await btn.count() == 0:
             raise LoginError("Login-with-phone-number button not found.")
 

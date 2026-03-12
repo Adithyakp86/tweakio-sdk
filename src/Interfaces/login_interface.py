@@ -1,4 +1,5 @@
 """Abstract base class for login handlers."""
+
 import logging
 from abc import ABC, abstractmethod
 
@@ -20,10 +21,12 @@ class LoginInterface(ABC):
         """Perform login authentication."""
         ...
 
+    @abstractmethod
     async def logout(self, **kwargs) -> bool:
         """Perform logout and cleanup."""
         ...
 
+    @abstractmethod
     async def is_login_successful(self, **kwargs) -> bool:
         """Check if login was successful."""
         ...

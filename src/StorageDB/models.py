@@ -27,9 +27,7 @@ class Message(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
 
     # Message identification
-    message_id: Mapped[str] = mapped_column(
-        String(255), unique=True, nullable=False, index=True
-    )
+    message_id: Mapped[str] = mapped_column(String(255), unique=True, nullable=False, index=True)
 
     # Message content
     raw_data: Mapped[str] = mapped_column(Text, nullable=True)
@@ -42,9 +40,12 @@ class Message(Base):
     parent_chat_name: Mapped[str] = mapped_column(
         String(255), nullable=False, default="", index=True
     )
-    parent_chat_id: Mapped[str] = mapped_column(
-        String(255), nullable=False, default="", index=True
-    )
+    parent_chat_id: Mapped[str] = mapped_column(String(255), nullable=False, default="", index=True)
+    # Encrypted versions of chat name (populated when encryption is enabled).
+    # When encrypted_chat_name is set, parent_chat_name holds a HMAC-SHA256
+    # hex digest of the original name (queryable, but not reversible without key).
+    encrypted_chat_name: Mapped[str | None] = mapped_column(Text, nullable=True)
+    chat_name_nonce: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     # Timing
     system_hit_time: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
@@ -59,9 +60,10 @@ class Message(Base):
     )
 
     def __repr__(self) -> str:
+        chat_label = "<encrypted>" if self.encrypted_chat_name else self.parent_chat_name
         return (
             f"<Message(id={self.id}, message_id='{self.message_id}', "
-            f"direction='{self.direction}', chat='{self.parent_chat_name}')>"
+            f"direction='{self.direction}', chat='{chat_label}')>"
         )
 
     def to_dict(self) -> dict:
@@ -76,6 +78,8 @@ class Message(Base):
             "direction": self.direction,
             "parent_chat_name": self.parent_chat_name,
             "parent_chat_id": self.parent_chat_id,
+            "encrypted_chat_name": self.encrypted_chat_name,
+            "chat_name_nonce": self.chat_name_nonce,
             "system_hit_time": self.system_hit_time,
             "created_at": self.created_at.isoformat() if self.created_at else None,
         }

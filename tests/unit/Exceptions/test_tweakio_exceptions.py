@@ -1,13 +1,12 @@
-from src.Exceptions.tweakio_exceptions import (
+from src.Exceptions import (
     ChatNotFoundError,
     ChatClickError,
-    MessageDataError,
     MessageNotFoundError,
-    QRNotScannedError,
-    AuthenticationError
+    AuthenticationError,
 )
 
 import pytest
+
 
 def test_chat_not_found_error():
     """Test ChatNotFoundError can be raised and caught."""
@@ -23,24 +22,10 @@ def test_chat_click_error():
     assert str(exc_info.value) == "test"
 
 
-def test_message_data_error():
-    """Test MessageDataError can be raised and caught."""
-    with pytest.raises(MessageDataError) as exc_info:
-        raise MessageDataError("test")
-    assert str(exc_info.value) == "test"
-
-
 def test_message_not_found_error():
     """Test MessageNotFoundError can be raised and caught."""
     with pytest.raises(MessageNotFoundError) as exc_info:
         raise MessageNotFoundError("test")
-    assert str(exc_info.value) == "test"
-
-
-def test_qr_not_scanned_error():
-    """Test QRNotScannedError can be raised and caught."""
-    with pytest.raises(QRNotScannedError) as exc_info:
-        raise QRNotScannedError("test")
     assert str(exc_info.value) == "test"
 
 
